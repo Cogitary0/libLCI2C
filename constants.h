@@ -1,11 +1,11 @@
 #pragma once
 
-enum {
-    EN = B00000100,
-    RW = B00000010,
-    RS = B00000001,
-    DF = B00000000
-}
+
+#define EN = B00000100,
+#define RW = B00000010,
+#define RS = B00000001,
+#define DF = B00000000
+
 
 enum {
     // DISPLAY
@@ -53,4 +53,3 @@ enum {
     C_LCD_ADDR_2LINE = 0x14,
     C_LCD_ADDR_3LINE = 0x54,
 };
-
