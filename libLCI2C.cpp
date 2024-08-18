@@ -1,26 +1,26 @@
 #include "libLCI2C.h"
 
 
-LCD::LCD(byte address, byte cols, byte rows)
-:   __address(address), 
-    __cols(cols), 
-    __rows(rows), 
-    __backlight_value(C_BACKLIGHT_ON){}
+LCD::LCD(const byte address, const byte cols, const byte rows)
+:   address(address), 
+    cols(cols), 
+    rows(rows), 
+    backlight_value(C_BACKLIGHT_ON){}
 
 
 void LCD::init(){
     WIRE_BEGIN();
     
-    __display_function = C_4_BIT_MODE | C_ON_1_LINE | C_5x8_CHAR_SIZE;
+    this->display_function = C_4_BIT_MODE | C_ON_1_LINE | C_5x8_CHAR_SIZE;
 
-    if(__rows > 1)
+    if(this->rows > 1)
     {
-        __display_function |= C_ON_2_LINE;
+        this->display_function |= C_ON_2_LINE;
     }
 
     delay(50);
 
-    __write(__backlight_value);
+    __write(backlight_value);
     delay(1000);
 
     __write_4bits(C_LCD_SETUP_FUNCTION_SET);//(0x03 << 4);
@@ -32,15 +32,15 @@ void LCD::init(){
 
     __write_4bits(C_LCD_SETUP_4BIT_INTERFACE);
 
-    send_command(C_FUNCTION_SET | __display_function);
+    send_command(C_FUNCTION_SET | this->display_function);
 
     set_display(true);
 
     clear();
 
-    __display_mode = C_ENTRY_LEFT | C_ENTRY_SHIFT_DECREMENT;
+    this->display_mode = C_ENTRY_LEFT | C_ENTRY_SHIFT_DECREMENT;
     
-    send_command(C_ENTRY_MODE_SET | __display_mode);
+    send_command(C_ENTRY_MODE_SET | this->display_mode);
 
     reset();
 }
@@ -49,6 +49,8 @@ void LCD::init(){
 ///============ BASIC ===============///
 
 void LCD::reset(){
+    this->pos_x = 0;
+    this->pos_y = 0;
     send_command(C_RETURN_HOME);
     delayMicroseconds(1530); //~1.52(+-0.01) ms
 }
@@ -68,12 +70,17 @@ void LCD::create_char(byte location, byte* char_map){
     for(byte i = 0;  i < 8; i++){
         write(char_map[i]);
     }
-
 }
 
 void LCD::set_position_cursor(byte col, byte row){
-    row = (row > __rows - 1)? __rows - 1 : row;
+    row = (row > this->rows - 1)? this->rows - 1 : row;
     send_command(C_SET_DDRAM_ADDR | (col + ROW_SETS[row]));
+}
+
+void LCD::print_char(byte location, byte* char_map){
+    create_char(location, char_map);
+    reset();
+    write(location);
 }
 
 void LCD::print(const char* str){
@@ -88,16 +95,42 @@ void LCD::print(const char* str){
 ///============ SETs ===============///
 
 void LCD::set_display(bool flag){
-    __display_control |= (flag)? C_DISPLAY_ON : C_DISPLAY_OFF;
-    send_command(C_DISPLAY_CONTROL | __display_control);
+    this->display_control |= (flag)? C_DISPLAY_ON : C_DISPLAY_OFF;
+    send_command(C_DISPLAY_CONTROL | this->display_control);
 }
 
 
 void LCD::set_backlight(bool flag){
-    __display_control |= (flag)? C_BACKLIGHT_ON : C_BACKLIGHT_OFF;
-    send_command(C_DISPLAY_CONTROL | __display_control);
+    this->display_control |= (flag)? C_BACKLIGHT_ON : C_BACKLIGHT_OFF;
+    send_command(C_DISPLAY_CONTROL | this->display_control);
 }
 
+
+void LCD::set_cursor(bool flag){
+    this->display_control  |= (flag)? C_CURSOR_ON : C_CURSOR_OFF;
+    send_command(C_DISPLAY_CONTROL | this->display_control);
+
+}
+
+
+
+///=========== GETTERS ================///
+
+bool LCD::get_display(void){
+    return (C_DISPLAY_ON & this->display_control) != 0;
+}
+
+bool LCD::get_backlight(void){
+    return (C_BACKLIGHT_ON == this->backlight_value);
+}
+
+bool LCD::get_blink(void){
+    return (C_BLINK_ON & this->display_control) != 0;
+}
+
+bool LCD::get_cursor(void){
+    return (C_CURSOR_ON & this->display_control) != 0;
+}
 
 
 ///============ SEND COMMAND ==========///
@@ -136,7 +169,7 @@ inline void LCD::__pulse(byte data){
 }
 
 inline void LCD::__write(byte data){
-    WIRE_BEGINTRANSMISSION(__address);
-    WIRE_WRITE(data | __backlight_value);
+    WIRE_BEGINTRANSMISSION(this->address);
+    WIRE_WRITE(data | this->backlight_value);
     WIRE_ENDTRANSMISSION();
 }

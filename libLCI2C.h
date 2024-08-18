@@ -15,24 +15,27 @@ class LCD{
         LCD(const byte address, const byte cols, const byte rows);
         ~LCD() = default;
 
-        void init(void);
-        void clear(void);
-        void reset(void);
+        void init   (void);
+        void clear  (void);
+        void reset  (void);
 
-        void create_char(byte location, byte* char_map);
-        void set_position_cursor(byte col, byte row);
-        void print(const char* str);
+        void create_char            (byte location, byte* char_map);
+        void print_char             (byte location, byte* char_map);
+        void set_position_cursor    (byte col, byte row);
+        void print                  (const char* str);
 
-        void set_display(bool flag);
-        void set_backlight(bool flag); 
-        void set_blink(bool flag);
+        void set_display    (bool flag);
+        void set_backlight  (bool flag); 
+        void set_blink      (bool flag);
+        void set_cursor     (bool flag); 
 
-        bool get_display(void);
-        bool get_backlight(void);
-        bool get_blink(void);
+        bool get_display    (void);
+        bool get_backlight  (void);
+        bool get_blink      (void);
+        bool get_cursor     (void);
 
-        inline void send_command(byte);
-        inline void write(byte);
+        inline void send_command    (byte);
+        inline void write           (byte);
 
 
     private:
@@ -41,12 +44,16 @@ class LCD{
         inline void __write(byte);
         inline void __pulse(byte);
 
-        const byte __address;
-        const byte __rows;
-        const byte __cols;
+        const byte address;
+        const byte rows;
+        const byte cols;
 
-        byte __display_function;
-        byte __display_control;
-        byte __display_mode;
-        byte __backlight_value;
+        byte display_function;
+        byte display_control;
+        byte display_mode;
+        byte backlight_value;
+        byte display_value;
+
+        byte pos_x;
+        byte pos_y;
 };
