@@ -4,22 +4,38 @@
 #include <stdlib.h>
 
 #include "constants.h"
+#include "builtins.h"
 
-typedef unsigned char byte;
+using byte = unsigned char;
+using uint = unsigned int;
 
-typedef struct _value_field{
-    byte address;
-    byte rows;
-    byte cols;
-} Field;
+class LC_I2C{
 
-typedef struct _LCD{
-    Field* value;
-} LCD;
+    public:
+        LC_I2C(const byte address, const byte cols, const byte rows);
+        ~LC_I2C() = default;
+
+        void init();
+        void clear();
+
+        void set_display(bool flag);
+        void set_backlight(bool flag); 
+
+        void send_command(byte);
 
 
-static inline void __constructor(LCD* lcd, byte, byte, byte);
-static inline void __destructor(LCD* lcd);
+    private:
+        void __send(byte, byte);
+        void __write_4bits(byte);
+        void __write(byte);
+        void __pulse(byte);
 
-LCD* New(byte address, byte rows, byte cols);
-void Del(LCD* lcd);
+        const byte __address;
+        const byte __rows;
+        const byte __cols;
+
+        byte __display_function;
+        byte __display_constrol;
+        byte __display_mode;
+        byte __backlight_value;
+};
