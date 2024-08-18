@@ -15,6 +15,6 @@ inline void WIRE_WRITE(byte DATA){
     Wire.write(DATA);
 }
 
-inline void WIRE_ENDTRANSMISSION(void){
+inline unsigned char WIRE_ENDTRANSMISSION(void){
     Wire.endTransmission();
 }

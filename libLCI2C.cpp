@@ -1,14 +1,23 @@
 #include "libLCI2C.h"
 
+LCD::LCD(const byte cols, const byte rows) 
+:   cols(cols),
+    rows(rows),
+    q_auto_pin_i2c(true),
+    backlight_value(C_BACKLIGHT_ON){}
 
 LCD::LCD(const byte address, const byte cols, const byte rows)
 :   address(address), 
     cols(cols), 
     rows(rows), 
+    q_auto_pin_i2c(false),
     backlight_value(C_BACKLIGHT_ON){}
 
 
 void LCD::init(){
+
+    if(q_auto_pin_i2c)__scan_iic();
+
     WIRE_BEGIN();
     
     this->display_function = C_4_BIT_MODE | C_ON_1_LINE | C_5x8_CHAR_SIZE;
@@ -49,8 +58,8 @@ void LCD::init(){
 ///============ BASIC ===============///
 
 void LCD::reset(){
-    this->pos_x = 0;
-    this->pos_y = 0;
+    this->pos_cursor.x = 0;
+    this->pos_cursor.y = 0;
     send_command(C_RETURN_HOME);
     delayMicroseconds(1530); //~1.52(+-0.01) ms
 }
@@ -62,8 +71,8 @@ void LCD::clear(){
 }
 
 
-void LCD::scroll_display(DIRECTION DIRECTION::dir){
-    send_command(C_CURSOR_SHIFT | C_DISPLAY_MOVE | DIRECTION::dir);
+void LCD::scroll_display(DIRECTION dir){
+    send_command(C_CURSOR_SHIFT | C_DISPLAY_MOVE |  dir);
 }
 
 void LCD::scroll_display_left(void){
@@ -86,6 +95,8 @@ void LCD::create_char(byte location, byte* char_map){
 }
 
 void LCD::set_position_cursor(byte col, byte row){
+    this->pos_cursor.x = col;
+    this->pos_cursor.y = row;
     row = (row > this->rows - 1)? this->rows - 1 : row;
     send_command(C_SET_DDRAM_ADDR | (col + ROW_SETS[row]));
 }
@@ -105,7 +116,7 @@ void LCD::print(const char* str){
 
 
 
-///============ SETs ===============///
+///============ SETTERS ===============///
 
 void LCD::set_display(bool flag){
     this->display_control |= (flag)? C_DISPLAY_ON : C_DISPLAY_OFF;
@@ -131,7 +142,6 @@ void LCD::set_blink(bool flag){
 }
 
 
-
 ///=========== GETTERS ================///
 
 bool LCD::get_display(void){
@@ -150,8 +160,23 @@ bool LCD::get_cursor(void){
     return (C_CURSOR_ON & this->display_control) != 0;
 }
 
+byte LCD::get_address(void){
+    return this->address;
+}
 
-///============ SEND COMMAND ==========///
+byte LCD::get_cols(void){
+    return this->cols;
+}
+
+byte LCD::get_rows(void){
+    return this->rows;
+}
+
+vec2 LCD::get_pos_cursor(void){
+    return this->pos_cursor;
+}
+
+///===  ========= SEND COMMAND ==========///
 
 inline void LCD::send_command(byte command){
     __send(command, DF);
@@ -190,4 +215,17 @@ inline void LCD::__write(byte data){
     WIRE_BEGINTRANSMISSION(this->address);
     WIRE_WRITE(data | this->backlight_value);
     WIRE_ENDTRANSMISSION();
+}
+
+/// temp
+inline void LCD::__scan_iic(void){
+    for(byte addr  = 0; addr < 128; addr++)
+    {
+        WIRE_BEGINTRANSMISSION(addr);
+        if(Wire.endTransmission() == 0)
+        {
+            this->address = addr;
+            return;
+        }
+    }
 }

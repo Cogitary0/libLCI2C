@@ -2,9 +2,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <Wire.h>
 
 #include "constants.h"
 #include "builtins.h"
+#include "typedefs.h"
 
 using byte = unsigned char;
 using uint = unsigned int;
@@ -12,7 +14,8 @@ using uint = unsigned int;
 class LCD{
 
     public:
-        LCD(const byte address, const byte cols, const byte rows);
+        LCD(byte cols, byte rows);
+        LCD(byte address, byte cols, byte rows);
         ~LCD() = default;
 
         void init   (void);
@@ -28,7 +31,6 @@ class LCD{
         void scroll_display_left    (void);
         void scroll_display_right   (void);        
 
-
         void set_display    (bool flag);
         void set_backlight  (bool flag); 
         void set_blink      (bool flag);
@@ -38,20 +40,28 @@ class LCD{
         bool get_backlight  (void);
         bool get_blink      (void);
         bool get_cursor     (void);
+        
+        byte get_rows       (void);
+        byte get_cols       (void);
+        byte get_address    (void);
+        vec2 get_pos_cursor (void);
 
         inline void send_command    (byte);
         inline void write           (byte);
 
-
+ 
     private:
         inline void __send          (byte, byte);
         inline void __write_4bits   (byte);
         inline void __write         (byte);
         inline void __pulse         (byte);
+        inline void __scan_iic      (void);
 
-        const byte address;
+     /*const*/byte address;
         const byte rows;
         const byte cols;
+
+        bool q_auto_pin_i2c;
 
         byte display_function;
         byte display_control;
@@ -59,6 +69,5 @@ class LCD{
         byte backlight_value;
         byte display_value;
 
-        byte pos_x;
-        byte pos_y;
+        vec2 pos_cursor;
 };
