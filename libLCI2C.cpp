@@ -62,6 +62,19 @@ void LCD::clear(){
 }
 
 
+void LCD::scroll_display(DIRECTION dir){
+    send_command(C_CURSOR_SHIFT | C_DISPLAY_MOVE | dir);
+}
+
+void LCD::scroll_display_left(void){
+    scroll_display(LEFT);
+}
+
+void LCD::scroll_display_right(void){
+    scroll_display(RIGHT);
+}
+
+
 ///============== CHAR ================///
 
 void LCD::create_char(byte location, byte* char_map){
@@ -110,6 +123,11 @@ void LCD::set_cursor(bool flag){
     this->display_control  |= (flag)? C_CURSOR_ON : C_CURSOR_OFF;
     send_command(C_DISPLAY_CONTROL | this->display_control);
 
+}
+
+void LCD::set_blink(bool flag){
+    this->display_control |= (flag)? C_BLINK_ON : C_BLINK_OFF;
+    send_command(C_DISPLAY_CONTROL | this->display_control);
 }
 
 

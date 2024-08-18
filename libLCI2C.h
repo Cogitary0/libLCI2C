@@ -24,6 +24,11 @@ class LCD{
         void set_position_cursor    (byte col, byte row);
         void print                  (const char* str);
 
+        void scroll_display         (DIRECTION dir);
+        void scroll_display_left    (void);
+        void scroll_display_right   (void);        
+
+
         void set_display    (bool flag);
         void set_backlight  (bool flag); 
         void set_blink      (bool flag);
@@ -39,10 +44,10 @@ class LCD{
 
 
     private:
-        inline void __send(byte, byte);
-        inline void __write_4bits(byte);
-        inline void __write(byte);
-        inline void __pulse(byte);
+        static inline void __send          (byte, byte);
+        static inline void __write_4bits   (byte);
+        static inline void __write         (byte);
+        static inline void __pulse         (byte);
 
         const byte address;
         const byte rows;
