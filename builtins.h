@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Wire.h>
+#include <Arduino.h>
 
 inline void WIRE_BEGIN(void){
     Wire.begin();
@@ -11,7 +12,7 @@ inline void WIRE_BEGINTRANSMISSION(byte ADDR){
 }
 
 inline void WIRE_WRITE(byte DATA){
-    Wire.wire(DATA);
+    Wire.write(DATA);
 }
 
 inline void WIRE_ENDTRANSMISSION(void){

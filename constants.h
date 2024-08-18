@@ -1,11 +1,14 @@
 #pragma once
 
+#define EN B00000100
+#define RW B00000010
+#define RS B00000001
+#define DF B00000000
 
-#define EN = B00000100,
-#define RW = B00000010,
-#define RS = B00000001,
-#define DF = B00000000
-
+enum {
+    ON  = 1,
+    OFF = 0
+};
 
 enum {
     // DISPLAY
@@ -53,3 +56,6 @@ enum {
     C_LCD_ADDR_2LINE = 0x14,
     C_LCD_ADDR_3LINE = 0x54,
 };
+
+static const unsigned char ROW_SETS[4] = {C_LCD_ADDR_0LINE, C_LCD_ADDR_1LINE,
+                                          C_LCD_ADDR_2LINE, C_LCD_ADDR_3LINE};

@@ -9,20 +9,30 @@
 using byte = unsigned char;
 using uint = unsigned int;
 
-class LC_I2C{
+class LCD{
 
     public:
-        LC_I2C(const byte address, const byte cols, const byte rows);
-        ~LC_I2C() = default;
+        LCD(const byte address, const byte cols, const byte rows);
+        ~LCD() = default;
 
         void init(void);
         void clear(void);
-        void reset(void)
+        void reset(void);
+
+        void create_char(byte location, byte* char_map);
+        void set_position_cursor(byte col, byte row);
+        void print(const char* str);
 
         void set_display(bool flag);
         void set_backlight(bool flag); 
+        void set_blink(bool flag);
+
+        bool get_display(void);
+        bool get_backlight(void);
+        bool get_blink(void);
 
         inline void send_command(byte);
+        inline void write(byte);
 
 
     private:
