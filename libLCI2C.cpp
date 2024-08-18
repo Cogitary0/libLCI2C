@@ -62,16 +62,16 @@ void LCD::clear(){
 }
 
 
-void LCD::scroll_display(DIRECTION dir){
-    send_command(C_CURSOR_SHIFT | C_DISPLAY_MOVE | dir);
+void LCD::scroll_display(DIRECTION DIRECTION::dir){
+    send_command(C_CURSOR_SHIFT | C_DISPLAY_MOVE | DIRECTION::dir);
 }
 
 void LCD::scroll_display_left(void){
-    scroll_display(LEFT);
+    scroll_display(DIRECTION::LEFT);
 }
 
 void LCD::scroll_display_right(void){
-    scroll_display(RIGHT);
+    scroll_display(DIRECTION::RIGHT);
 }
 
 

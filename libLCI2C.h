@@ -44,10 +44,10 @@ class LCD{
 
 
     private:
-        static inline void __send          (byte, byte);
-        static inline void __write_4bits   (byte);
-        static inline void __write         (byte);
-        static inline void __pulse         (byte);
+        inline void __send          (byte, byte);
+        inline void __write_4bits   (byte);
+        inline void __write         (byte);
+        inline void __pulse         (byte);
 
         const byte address;
         const byte rows;
