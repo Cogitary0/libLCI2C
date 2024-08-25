@@ -3,13 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <Wire.h>
+#include <Arduino.h>
 
 #include "constants.h"
 #include "builtins.h"
 #include "typedefs.h"
-
-using byte = unsigned char;
-using uint = unsigned int;
 
 class LCD{
 
@@ -29,7 +27,7 @@ class LCD{
 
         void scroll_display         (DIRECTION dir);
         void scroll_display_left    (void);
-        void scroll_display_right   (void);        
+        void scroll_display_right   (void);
 
         void set_display    (bool flag);
         void set_backlight  (bool flag); 

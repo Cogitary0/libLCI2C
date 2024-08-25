@@ -58,8 +58,7 @@ void LCD::init(){
 ///============ BASIC ===============///
 
 void LCD::reset(){
-    this->pos_cursor.x = 0;
-    this->pos_cursor.y = 0;
+    this->pos_cursor.x = this->pos_cursor.y = 0;
     send_command(C_RETURN_HOME);
     delayMicroseconds(1530); //~1.52(+-0.01) ms
 }
@@ -82,7 +81,6 @@ void LCD::scroll_display_left(void){
 void LCD::scroll_display_right(void){
     scroll_display(DIRECTION::RIGHT);
 }
-
 
 ///============== CHAR ================///
 

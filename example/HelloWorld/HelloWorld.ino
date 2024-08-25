@@ -1,6 +1,6 @@
-#include "LCI2C.h"
+#include <libLCI2C.h>
 
-LC_I2C display(39, 16, 2);
+LC_I2C display(16, 2);
 
 void setup(){
   Serial.begin(9600);
